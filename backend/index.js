@@ -16,6 +16,11 @@ app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "index.html"));
 });
 
+app.get("/users", (req, res) => {
+  res.header(`Access-Control-Allow-Origin`, `*`);
+  res.json({ users: ["user1", "user2", "use3"] });
+});
+
 io.on("connection", (socket) => {
   console.log("a user connected");
   socket.on("disconnect", () => {
