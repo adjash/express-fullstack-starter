@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.IO Chat</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body
+    class="bg-gray-100 dark:bg-gray-900 dark:text-gray-200 min-h-screen flex flex-col justify-center items-center"
+  >
+    <div
+      class="w-full max-w-lg bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+    >
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold text-blue-700 dark:text-blue-300">
+          Chat Room
+        </h1>
+        <button
+          id="theme-toggle"
+          class="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none"
+        >
+          🌞/🌙
+        </button>
+      </div>
+      <ul
+        id="messages"
+        class="mb-4 h-64 overflow-y-auto border border-gray-300 dark:border-gray-600 p-2 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+      ></ul>
+      <form id="form" action="" class="flex">
+        <input
+          id="input"
+          autocomplete="off"
+          class="flex-grow border border-gray-300 dark:border-gray-600 p-3 rounded-l-lg text-lg placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Type your message..."
+          aria-label="Message input"
+        />
+        <button
+          class="p-3 bg-blue-600 text-white text-lg rounded-r-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-label="Send message"
+        >
+          Send
+        </button>
+      </form>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      const form = document.getElementById("form");
+      const input = document.getElementById("input");
+      const messages = document.getElementById("messages");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit("chat message", input.value);
+          input.value = "";
+        }
+      });
+
+      socket.on("chat message", (msg) => {
+        const item = document.createElement("li");
+        item.textContent = msg;
+        item.classList.add(
+          "p-3",
+          "border-b",
+          "border-gray-200",
+          "dark:border-gray-600",
+          "text-gray-800",
+          "dark:text-gray-200",
+          "bg-white",
+          "dark:bg-gray-800",
+          "rounded-lg",
+          "shadow-sm",
+          "mb-2"
+        );
+        messages.appendChild(item);
+        messages.scrollTop = messages.scrollHeight;
+      });
+
+      // Dark Mode Toggle
+      const themeToggleBtn = document.getElementById("theme-toggle");
+      const root = document.documentElement;
+
+      themeToggleBtn.addEventListener("click", () => {
+        if (root.classList.contains("light")) {
+          root.classList.remove("light");
+          root.classList.add("dark");
+        } else {
+          root.classList.remove("dark");
+          root.classList.add("light");
+        }
+      });
+    </script>
+  </body>
+</html>
